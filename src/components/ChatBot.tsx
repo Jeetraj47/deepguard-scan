@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { X, Send, Bot } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Message {
   role: "user" | "assistant";
@@ -29,22 +31,33 @@ const ChatBot = ({ onClose }: ChatBotProps) => {
 
     const userMessage = input.trim();
     setInput("");
-    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    const updatedMessages: Message[] = [...messages, { role: "user" as const, content: userMessage }];
+    setMessages(updatedMessages);
     setIsTyping(true);
 
-    // Simulate AI response - in production, connect to Lovable AI or your Python chatbot
-    setTimeout(() => {
-      const responses = [
-        "Deepfakes are synthetic media created using AI/ML techniques. Our platform uses advanced algorithms including CNNs, RNNs, and frequency analysis to detect facial inconsistencies and temporal anomalies.",
-        "Face-swap deepfakes replace one person's face with another. We analyze facial features, expressions, and movements to identify unnatural transitions and discrepancies.",
-        "Our system provides detailed reports showing mathematical analysis, abnormalities detected, and confidence scores for each video analyzed.",
-        "Deep Guard AI uses multiple detection methods including Convolutional Neural Networks, temporal analysis, audio-visual consistency checks, and biometric verification."
-      ];
-      
-      const response = responses[Math.floor(Math.random() * responses.length)];
-      setMessages(prev => [...prev, { role: "assistant", content: response }]);
+    try {
+      const { data, error } = await supabase.functions.invoke('chat-assistant', {
+        body: { 
+          messages: updatedMessages.map(msg => ({ 
+            role: msg.role, 
+            content: msg.content 
+          }))
+        }
+      });
+
+      if (error) throw error;
+
+      setMessages(prev => [...prev, { role: "assistant", content: data.message }]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('Failed to get response. Please try again.');
+      setMessages(prev => [...prev, { 
+        role: "assistant", 
+        content: "I apologize, but I'm having trouble connecting right now. Please try again in a moment." 
+      }]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

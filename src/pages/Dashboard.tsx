@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Shield, Upload, MessageSquare, LogOut, FileVideo, CheckCircle, AlertTriangle } from "lucide-react";
+import { Shield, Upload, MessageSquare, LogOut, FileVideo, CheckCircle, AlertTriangle, User } from "lucide-react";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import UploadSection from "@/components/UploadSection";
 import ChatBot from "@/components/ChatBot";
 
@@ -41,10 +42,19 @@ const Dashboard = () => {
             <Shield className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Deep Guard AI</span>
           </div>
-          <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground">
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")}>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+            <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground">
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
