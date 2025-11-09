@@ -14,7 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      video_analyses: {
+        Row: {
+          analysis_details: Json | null
+          analysis_status: Database["public"]["Enums"]["analysis_status"]
+          completed_at: string | null
+          confidence_score: number | null
+          created_at: string
+          detected_anomalies: Json | null
+          error_message: string | null
+          file_name: string
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_deepfake: boolean | null
+          updated_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          analysis_details?: Json | null
+          analysis_status?: Database["public"]["Enums"]["analysis_status"]
+          completed_at?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          detected_anomalies?: Json | null
+          error_message?: string | null
+          file_name: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_deepfake?: boolean | null
+          updated_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          analysis_details?: Json | null
+          analysis_status?: Database["public"]["Enums"]["analysis_status"]
+          completed_at?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          detected_anomalies?: Json | null
+          error_message?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_deepfake?: boolean | null
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_analyses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +111,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      analysis_status: "pending" | "processing" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +238,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      analysis_status: ["pending", "processing", "completed", "failed"],
+    },
   },
 } as const
